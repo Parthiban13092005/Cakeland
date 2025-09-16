@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card, CardContent, CardHeader } from '../ui/Card';
+import { adminSignIn } from '../../lib/supabase';
 
 interface AdminLoginProps {
-  onLogin: (username: string, password: string) => Promise<boolean>;
+  onLogin: (admin: any) => void;
 }
 
 export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
@@ -22,9 +23,11 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     setError('');
 
     try {
-      const success = await onLogin(credentials.username, credentials.password);
-      if (!success) {
-        setError('Invalid credentials. Please try again.');
+      const result = await adminSignIn(credentials.username, credentials.password);
+      if (result.success) {
+        onLogin(result.admin);
+      } else {
+        setError(result.error || 'Invalid credentials. Please try again.');
       }
     } catch (error) {
       setError('Login failed. Please try again.');
@@ -41,14 +44,14 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream to-pink-50 flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blush to-lavender flex items-center justify-center py-12 px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="text-center">
-            <div className="bg-amber-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-gradient-to-br from-rose-pink to-soft-pink w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-amber-800">Admin Login</h1>
+            <h1 className="text-2xl font-bold text-gray-800 font-display">Admin Login</h1>
             <p className="text-gray-600 mt-2">
               Access the PRG Cake Land admin dashboard
             </p>
@@ -73,7 +76,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 value={credentials.username}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors"
                 placeholder="Enter admin username"
               />
             </div>
@@ -90,7 +93,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                   value={credentials.password}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 pr-10"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 pr-10 transition-colors"
                   placeholder="Enter admin password"
                 />
                 <button

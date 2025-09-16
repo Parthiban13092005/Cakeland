@@ -1,9 +1,8 @@
 export interface User {
   id: string;
-  google_id: string;
   email: string;
   name: string;
-  profile_picture?: string;
+  phone: string;
   loyalty_points: number;
   created_at: string;
   updated_at: string;
@@ -60,7 +59,8 @@ export interface AdminLog {
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signIn: () => Promise<void>;
+  signIn: (email: string, password: string) => Promise<{ error?: string }>;
+  signUp: (email: string, password: string, name: string, phone: string) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
 }
 
@@ -72,4 +72,12 @@ export interface CartContextType {
   clearCart: () => void;
   getTotalAmount: () => number;
   getTotalItems: () => number;
+}
+
+export interface AdminUser {
+  id: string;
+  username: string;
+  email: string;
+  full_name: string;
+  is_active: boolean;
 }

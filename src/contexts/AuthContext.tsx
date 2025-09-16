@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase, getCurrentUser, upsertUser } from '../lib/supabase';
+import { supabase, getCurrentUser, createUserProfile } from '../lib/supabase';
 import type { User, AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,8 +37,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
-          // Upsert user data and get full user info
-          await upsertUser(session.user);
           const userData = await getCurrentUser();
           setUser(userData);
         } else if (event === 'SIGNED_OUT') {
@@ -51,17 +49,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-      }
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
     });
-    if (error) throw error;
+    
+    if (error) {
+      return { error: error.message };
+    }
+    
+    return {};
+  };
+
+  const signUp = async (email: string, password: string, name: string, phone: string) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password
+    });
+    
+    if (error) {
+      return { error: error.message };
+    }
+    
+    if (data.user) {
+      // Create user profile
+      await createUserProfile(data.user, { name, phone });
+    }
+    
+    return {};
   };
 
   const signOut = async () => {
@@ -73,6 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     loading,
     signIn,
+    signUp,
     signOut
   };
 

@@ -18,10 +18,10 @@ export const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variantClasses = {
-    primary: 'bg-amber-600 hover:bg-amber-700 text-white focus:ring-amber-500',
-    secondary: 'bg-pink-300 hover:bg-pink-400 text-amber-900 focus:ring-pink-300',
-    outline: 'border-2 border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white focus:ring-amber-500',
-    ghost: 'text-amber-600 hover:bg-amber-50 focus:ring-amber-500'
+    primary: 'bg-gradient-to-r from-rose-pink to-soft-pink hover:from-pink-600 hover:to-pink-500 text-white focus:ring-pink-500 shadow-lg',
+    secondary: 'bg-gradient-to-r from-lavender to-blush hover:from-purple-300 hover:to-pink-300 text-gray-800 focus:ring-purple-300 shadow-md',
+    outline: 'border-2 border-rose-pink text-rose-pink hover:bg-rose-pink hover:text-white focus:ring-pink-500',
+    ghost: 'text-rose-pink hover:bg-pink-50 focus:ring-pink-500'
   };
 
   const sizeClasses = {

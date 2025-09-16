@@ -16,15 +16,10 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [adminUser, setAdminUser] = useState<any>(null);
 
-  const handleAdminLogin = async (username: string, password: string): Promise<boolean> => {
-    // Simple admin authentication (in production, use proper authentication)
-    if (username === 'AdminPRG' && password === 'Cake@123') {
-      setIsAdminLoggedIn(true);
-      return true;
-    }
-    return false;
+  const handleAdminLogin = (admin: any) => {
+    setAdminUser(admin);
   };
 
   const handlePageChange = (page: string) => {
@@ -34,7 +29,7 @@ function App() {
   const renderCurrentPage = () => {
     // Admin routes
     if (currentPage === 'admin') {
-      if (!isAdminLoggedIn) {
+      if (!adminUser) {
         return <AdminLogin onLogin={handleAdminLogin} />;
       }
       return <AdminDashboard />;
@@ -67,18 +62,26 @@ function App() {
   };
 
   // Admin layout
-  if (currentPage === 'admin' && isAdminLoggedIn) {
+  if (currentPage === 'admin' && adminUser) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="bg-amber-800 text-white p-4">
+      <div className="min-h-screen">
+        <div className="bg-gradient-to-r from-rose-pink to-purple-600 text-white p-4 shadow-lg">
           <div className="container mx-auto flex justify-between items-center">
-            <h1 className="text-xl font-bold">PRG Cake Land Admin</h1>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold">A</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">PRG Cake Land Admin</h1>
+                <p className="text-sm text-pink-100">Welcome, {adminUser.username}</p>
+              </div>
+            </div>
             <button
               onClick={() => {
-                setIsAdminLoggedIn(false);
+                setAdminUser(null);
                 setCurrentPage('home');
               }}
-              className="bg-amber-700 hover:bg-amber-600 px-4 py-2 rounded transition-colors"
+              className="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-colors"
             >
               Logout
             </button>
@@ -93,7 +96,7 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <div className="min-h-screen bg-cream">
+        <div className="min-h-screen bg-gradient-to-br from-cream to-blush">
           {currentPage !== 'admin' && (
             <Header currentPage={currentPage} onPageChange={handlePageChange} />
           )}
@@ -109,7 +112,7 @@ function App() {
             <div className="fixed bottom-4 right-4">
               <button
                 onClick={() => setCurrentPage('admin')}
-                className="bg-amber-800 hover:bg-amber-700 text-white p-2 rounded-full shadow-lg transition-colors"
+                className="bg-gradient-to-r from-rose-pink to-soft-pink hover:from-pink-600 hover:to-pink-500 text-white p-3 rounded-full shadow-lg transition-all transform hover:scale-110"
                 title="Admin Access"
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
